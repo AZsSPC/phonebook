@@ -20,7 +20,7 @@ switch ($action) {
         print_r($_SESSION);
         break;
     case A_ADDP:
-        addPhone($_SESSION['user'][A_MAIL], $_POST[A_PONM], $_POST[A_PHON]);
+        addPhone($_SESSION[A_USER][A_MAIL], $_POST[A_PONM], $_POST[A_PHON]);
         break;
     case "main":
     default:

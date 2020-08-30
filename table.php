@@ -12,10 +12,10 @@ require_once "const.php";
 const SAVE_JSON = 'phonebook.json';
 function drawTable(string $user, bool $admin = false): string
 {
-    if (!file_exists(SAVE_JSON)) file_put_contents(SAVE_JSON, json_encode(['keys' => ['adder', 'name', 'phone']]));
-
     $file = (array)json_decode(file_get_contents(SAVE_JSON));
-    $th = $file['keys'];    //разделы
+    $th = ['name', 'phone'];
+
+    if (isAdmin()) $th['values'][] = 'adder';
     $td = $file['values'];  //данные
     $container = [];
     $ret = '<table><tr>';
@@ -51,7 +51,16 @@ function addPhone(string $adder = null, string $name = null, string $phone = nul
         die;
     }
     $file = (array)json_decode(file_get_contents(SAVE_JSON));
-    $file['values'][] = ['adder' => $adder, 'name' => $name, 'phone' => $phone];
+    $file['values'][] = ['name' => $name, 'phone' => $phone, 'adder' => $adder];
     file_put_contents(SAVE_JSON, json_encode($file));
     header("Location: /");
+}
+
+function isAdmin(): bool
+{
+    $users = [];
+    if (file_exists(A_JSON_USER_SAVE)) $users = json_decode(file_get_contents(A_JSON_USER_SAVE), true);
+    foreach ($users as $user)
+        if ($_SESSION[A_USER][A_MAIL] === $user[A_MAIL] && $user[A_ADMN]) return true;
+    return false;
 }
